@@ -34,3 +34,11 @@ class ProjectPlace(Base):
     visited = Column(Boolean, default=False)
 
     project = relationship("TravelProject", back_populates="places")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    hashed_password = Column(String, nullable=False)

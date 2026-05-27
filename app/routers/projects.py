@@ -11,6 +11,8 @@ from ..schemas import (
     ProjectUpdate
 )
 from ..services.artic_api import fetch_artwork
+from ..core.security import get_current_user
+
 
 router = APIRouter(
     prefix="/projects",
@@ -18,7 +20,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=ProjectResponse)
+@router.post("/", response_model=ProjectResponse, dependencies=[Depends(get_current_user)])
 async def create_project(
     payload: ProjectCreate,
     db: Session = Depends(get_db)
@@ -69,7 +71,7 @@ async def create_project(
     return project
 
 
-@router.get("/", response_model=list[ProjectResponse])
+@router.get("/", response_model=list[ProjectResponse], dependencies=[Depends(get_current_user)])
 def list_projects(
     db: Session = Depends(get_db),
     skip: int = 0,
@@ -96,7 +98,7 @@ def list_projects(
     return query.offset(skip).limit(limit).all()
 
 
-@router.get("/{project_id}", response_model=ProjectResponse)
+@router.get("/{project_id}", response_model=ProjectResponse, dependencies=[Depends(get_current_user)])
 def get_project(
     project_id: int,
     db: Session = Depends(get_db)
@@ -114,7 +116,7 @@ def get_project(
     return project
 
 
-@router.put("/{project_id}", response_model=ProjectResponse)
+@router.put("/{project_id}", response_model=ProjectResponse, dependencies=[Depends(get_current_user)])
 def update_project(
     project_id: int,
     payload: ProjectUpdate,
@@ -145,7 +147,7 @@ def update_project(
     return project
 
 
-@router.delete("/{project_id}")
+@router.delete("/{project_id}", dependencies=[Depends(get_current_user)])
 def delete_project(
     project_id: int,
     db: Session = Depends(get_db)

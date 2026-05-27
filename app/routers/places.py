@@ -14,6 +14,8 @@ from ..crud import (
     validate_place_limit,
     check_project_completion
 )
+from ..core.security import get_current_user
+
 
 router = APIRouter(
     prefix="/projects/{project_id}/places",
@@ -21,7 +23,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=PlaceResponse)
+@router.post("/", response_model=PlaceResponse, dependencies=[Depends(get_current_user)])
 async def add_place(
     project_id: int,
     payload: PlaceCreate,
@@ -52,7 +54,7 @@ async def add_place(
     return place
 
 
-@router.get("/", response_model=list[PlaceResponse])
+@router.get("/", response_model=list[PlaceResponse], dependencies=[Depends(get_current_user)])
 def list_places(
     project_id: int,
     db: Session = Depends(get_db),
@@ -78,7 +80,7 @@ def list_places(
     return query.offset(skip).limit(limit).all()
 
 
-@router.get("/{place_id}", response_model=PlaceResponse)
+@router.get("/{place_id}", response_model=PlaceResponse, dependencies=[Depends(get_current_user)])
 def get_place(
     project_id: int,
     place_id: int,
@@ -95,7 +97,7 @@ def get_place(
     return place
 
 
-@router.patch("/{place_id}", response_model=PlaceResponse)
+@router.patch("/{place_id}", response_model=PlaceResponse, dependencies=[Depends(get_current_user)])
 def update_place(
     project_id: int,
     place_id: int,

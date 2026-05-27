@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
 from .database import Base, engine
-from .routers import projects, places
+from .routers import projects, places, auth
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Travel Planner API")
 
+app.include_router(auth.router)
 app.include_router(projects.router)
 app.include_router(places.router)
 
