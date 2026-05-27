@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -68,8 +70,30 @@ async def create_project(
 
 
 @router.get("/", response_model=list[ProjectResponse])
-def list_projects(db: Session = Depends(get_db)):
-    return db.query(TravelProject).all()
+def list_projects(
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10,
+    name: str | None = None,
+    completed: bool | None = None,
+    start_date_from: date | None = None,
+    start_date_to: date | None = None
+):
+    query = db.query(TravelProject)
+
+    if name:
+        query = query.filter(TravelProject.name.contains(name))
+
+    if completed is not None:
+        query = query.filter(TravelProject.completed == completed)
+
+    if start_date_from:
+        query = query.filter(TravelProject.start_date >= start_date_from)
+
+    if start_date_to:
+        query = query.filter(TravelProject.start_date <= start_date_to)
+
+    return query.offset(skip).limit(limit).all()
 
 
 @router.get("/{project_id}", response_model=ProjectResponse)

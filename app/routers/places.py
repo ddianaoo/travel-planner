@@ -53,10 +53,29 @@ async def add_place(
 
 
 @router.get("/", response_model=list[PlaceResponse])
-def list_places(project_id: int, db: Session = Depends(get_db)):
-    return db.query(ProjectPlace).filter(
+def list_places(
+    project_id: int,
+    db: Session = Depends(get_db),
+    skip: int = 0,
+    limit: int = 10,
+    visited: bool | None = None,
+    title: str | None = None,
+    external_id: int | None = None
+):
+    query = db.query(ProjectPlace).filter(
         ProjectPlace.project_id == project_id
-    ).all()
+    )
+
+    if visited is not None:
+        query = query.filter(ProjectPlace.visited == visited)
+
+    if title:
+        query = query.filter(ProjectPlace.title.contains(title))
+
+    if external_id is not None:
+        query = query.filter(ProjectPlace.external_id == external_id)
+
+    return query.offset(skip).limit(limit).all()
 
 
 @router.get("/{place_id}", response_model=PlaceResponse)
