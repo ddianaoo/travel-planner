@@ -1,0 +1,36 @@
+led / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.swp
+
+# Virtual environments
+virtualenv
+#I
+# # PyCharm project files
+.idea
+#
+# # Django stuff:
+*.log
+cmdb_*.json
+*.png
+#
+db.sqlite3
+.env
+
+# ## Migrations
+**/migrations/*
+**/_migrations_/*
+**/media/*
+#
+*.sqlite3
+#
+staticfiles
+data.json
+**/media/*
+
+**/venv/*
+/venv/*
+/venv/**
+venv/**
+.coverage
+*.db
